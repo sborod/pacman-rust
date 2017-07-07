@@ -1,0 +1,6 @@
+[package]
+name = "pacman_rust"
+version = "0.1.0"
+authors = ["Sergey Borodanov <s.borodanov@gmail.com>"]
+
+[dependencies]
