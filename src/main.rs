@@ -17,8 +17,7 @@ struct MainLoop {
     initial_time:        i64,
     current_time:        i64,
     current_frame:       i64,
-    last_rendered_frame: i64,
-    game_objects:        Vec<GameObject>
+    last_rendered_frame: i64
 }
 
 impl MainLoop {
@@ -27,8 +26,7 @@ impl MainLoop {
             initial_time:        timestamp(),
             current_time:        0,
             current_frame:       0,
-            last_rendered_frame: 0,
-            game_objects:        vec![]
+            last_rendered_frame: 0
         }
     }
 
@@ -37,23 +35,20 @@ impl MainLoop {
         self.current_frame = self.current_time*FRAME_PER_SECOND / 1000;
 
         if self.current_frame > self.last_rendered_frame {
-            self.game_objects[0].charge += 100.0;
-
-            if self.game_objects[0].charge > self.game_objects[0].threshold {
-                self.game_objects[0].charge = 0.0;
-            }
+            // do calc
         }
     }
 
-    fn render( &mut self ) {
+    fn render( &mut self, rendering_fn: &Fn() ) {
         if self.current_frame > self.last_rendered_frame {
             println!( "{clear}", clear = clear::All );
             println!( "{goto}", goto = cursor::Goto(1, 1) );
 
             //
             println!( "Current time: {t}", t = ( self.current_time as f64 ) / 1000.0 );
-            println!( "Neuron charge: {charge}", charge = self.game_objects[0].charge );
             
+            rendering_fn();
+
             //
             println!( "{reset}", reset = color::Fg( color::Reset ) );
             
@@ -101,15 +96,15 @@ fn main() {
 
     loop {
         main_loop.update();
-        main_loop.render();
+        main_loop.render( &|| {
+            draw( &game_field );
+        });
     }
-
-    draw(game_field);
 }
 
-fn draw( game_field: Vec< Vec<Cell> > ) {
+fn draw( game_field: &Vec< Vec<Cell> > ) {
     let mut stdout = MouseTerminal::from(stdout().into_raw_mode().unwrap());
-    writeln!(stdout, "{}", termion::clear::All);
+    // writeln!(stdout, "{}", termion::clear::All);
 
     for (i, column) in game_field.iter().enumerate() {
         for(j, cell) in column.iter().enumerate() {
