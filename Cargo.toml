@@ -5,3 +5,4 @@ authors = ["Sergey Borodanov <s.borodanov@gmail.com>"]
 
 [dependencies]
 termion = "*"
+time = "0.1"
