@@ -24,8 +24,8 @@ pub trait Gamable {
 impl MainLoop {
 
     //Зачем возвращать MainLoop? может просто войдовую функцию?
-    pub fn run( game: &mut Gamable ) -> MainLoop {
-        let mut tmp_MainLoop = MainLoop {
+    pub fn run( game: &mut Gamable ) {
+        let mut tmp_main_loop = MainLoop {
             initial_time:        timestamp(),
             time:                0,
             frame:               0,
@@ -34,11 +34,8 @@ impl MainLoop {
 
         loop {
             game.input_handling();
-
-            tmp_MainLoop.update( game );
+            tmp_main_loop.update( game );
         }
-
-        tmp_MainLoop
     }
 
     #[inline]
