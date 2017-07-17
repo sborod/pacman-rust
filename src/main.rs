@@ -4,8 +4,10 @@ use pacman_rust::green_tea_engine;
 use pacman_rust::game;
 
 fn main() {
-    let game_field = game::initialize_field();
-    let main_loop = green_tea_engine::MainLoop::init( &|| {
-        game::draw( &game_field );
-    } );
+    // зачем тут переменная main_loop?
+    // заменить init на run
+    let mut _game = game::Game::init(  );
+
+    let mut main_loop = green_tea_engine::MainLoop::run( &mut _game );
+
 }

@@ -14,8 +14,17 @@ pub struct MainLoop {
     last_rendered_frame: i64
 }
 
+pub trait Gamable {
+    fn input_handling(&mut self);
+    fn updating(&mut self);
+    fn rendering(&self);
+}
+
+
 impl MainLoop {
-    pub fn init( rendering_fn: &Fn() ) -> MainLoop {
+
+    //Зачем возвращать MainLoop? может просто войдовую функцию?
+    pub fn run( game: &mut Gamable ) -> MainLoop {
         let mut tmp_MainLoop = MainLoop {
             initial_time:        timestamp(),
             time:                0,
@@ -24,23 +33,33 @@ impl MainLoop {
         };
 
         loop {
-            tmp_MainLoop.update( &rendering_fn );
+            game.input_handling();
+
+            tmp_MainLoop.update( game );
         }
 
         tmp_MainLoop
     }
 
-    fn update( &mut self, rendering_fn: &Fn() ) {
+    #[inline]
+    fn update(&mut self, game: &mut Gamable ) {
         self.time = timestamp() - self.initial_time;
         self.frame = self.time*FRAME_PER_SECOND / 1000;
 
         if self.frame > self.last_rendered_frame {
-            self.render( &rendering_fn );
+
+            //
+            game.updating();
+            game.rendering();
+
+            //
             self.last_rendered_frame = self.frame;
+            
         }
     }
 
-    fn render( &mut self, rendering_fn: &Fn() ) {
-        rendering_fn();
-    }
+    // //зачем оборачивать в функцию?
+    // fn render( &mut self, rendering_fn: &Fn() ) {
+    //     rendering_fn();
+    // }
 }
