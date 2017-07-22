@@ -2,8 +2,9 @@ extern crate time;
 
 //
 extern crate termion;
+use self::termion::raw::IntoRawMode;
 use self::termion::async_stdin;
-use std::io::Read;
+use std::io::{Read, stdout};
 //
 
 const FRAME_PER_SECOND: i64 = 120;
@@ -39,6 +40,8 @@ impl MainLoop {
         };
 
         // Здесь!
+        let stdout = stdout();
+        let mut stdout = stdout.lock().into_raw_mode().unwrap();
         let mut stdin = async_stdin().bytes();
 
         loop {
