@@ -1,4 +1,5 @@
 extern crate termion;
+
 use ::green_tea_engine;
 
 pub enum Cell {
@@ -11,6 +12,21 @@ pub struct Game {
     game_field: Vec< Vec<Cell> >
 }
 
+impl green_tea_engine::Gamable for Game {
+    fn input_handling( &mut self ) {
+        self.input_handle();
+    }
+
+    fn updating( &mut self ) {
+        self.update();
+    }
+
+    fn rendering( &self ) {
+        self.draw();
+    }
+
+}
+
 impl Game {
     pub fn init() -> Game {
         Game {
@@ -18,15 +34,13 @@ impl Game {
         }
     }
 
-    pub fn input_handle(&mut self) {
-
+    pub fn input_handle( &mut self ) {
     }
 
-    pub fn update(&mut self) {
-
+    pub fn update( &mut self ) {
     }
 
-    pub fn draw(&self) {
+    pub fn draw( &self ) {
         print!( "{clear}", clear = termion::clear::All );
         print!( "{goto}", goto = termion::cursor::Goto(1, 1) );
 
@@ -71,17 +85,5 @@ fn get_symbol( cell: &Cell ) -> char {
         Cell::Empty => '_',
         Cell::Wall =>  '#',
         Cell::Player => '@'
-    }
-}
-
-impl green_tea_engine::Gamable for Game {
-    fn input_handling(&mut self) {
-        self.input_handle();
-    }
-    fn updating(&mut self) {
-        self.update();
-    }
-    fn rendering(&self) {
-        self.draw();
     }
 }

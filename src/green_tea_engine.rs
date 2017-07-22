@@ -1,9 +1,16 @@
 extern crate time;
 
+//
+extern crate termion;
+use self::termion::async_stdin;
+use std::io::Read;
+//
+
 const FRAME_PER_SECOND: i64 = 120;
 
 fn timestamp() -> i64 {
     let current_time = time::get_time();
+    
     current_time.sec*1000 + ( ( current_time.nsec / 1_000_000 ) as i64 )
 }
 
@@ -15,15 +22,14 @@ pub struct MainLoop {
 }
 
 pub trait Gamable {
-    fn input_handling(&mut self);
-    fn updating(&mut self);
-    fn rendering(&self);
+    fn input_handling( &mut self );
+    fn updating( &mut self );
+    fn rendering( &self );
 }
 
 
 impl MainLoop {
 
-    //Зачем возвращать MainLoop? может просто войдовую функцию?
     pub fn run( game: &mut Gamable ) {
         let mut tmp_main_loop = MainLoop {
             initial_time:        timestamp(),
@@ -32,14 +38,23 @@ impl MainLoop {
             last_rendered_frame: 0
         };
 
+        // Здесь!
+        let mut stdin = async_stdin().bytes();
+
         loop {
+            let byte = stdin.next();
+
+            if let Some( Ok( b'q' ) ) = byte {
+                break;
+            }
+
             game.input_handling();
             tmp_main_loop.update( game );
         }
     }
 
     #[inline]
-    fn update(&mut self, game: &mut Gamable ) {
+    fn update( &mut self, game: &mut Gamable ) {
         self.time = timestamp() - self.initial_time;
         self.frame = self.time*FRAME_PER_SECOND / 1000;
 
@@ -55,8 +70,4 @@ impl MainLoop {
         }
     }
 
-    // //зачем оборачивать в функцию?
-    // fn render( &mut self, rendering_fn: &Fn() ) {
-    //     rendering_fn();
-    // }
 }
