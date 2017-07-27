@@ -1,12 +1,5 @@
 extern crate time;
 
-//
-extern crate termion;
-use self::termion::raw::IntoRawMode;
-use self::termion::async_stdin;
-use std::io::{Read, stdout};
-//
-
 const FRAME_PER_SECOND: i64 = 120;
 
 fn timestamp() -> i64 {
@@ -39,18 +32,7 @@ impl MainLoop {
             last_rendered_frame: 0
         };
 
-        // Здесь!
-        let stdout = stdout();
-        let mut stdout = stdout.lock().into_raw_mode().unwrap();
-        let mut stdin = async_stdin().bytes();
-
         loop {
-            let byte = stdin.next();
-
-            if let Some( Ok( b'q' ) ) = byte {
-                break;
-            }
-
             game.input_handling();
             tmp_main_loop.update( game );
         }

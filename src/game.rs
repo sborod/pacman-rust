@@ -2,6 +2,10 @@ extern crate termion;
 
 use ::green_tea_engine;
 
+use self::termion::raw::IntoRawMode;
+use self::termion::async_stdin;
+use std::io::{Read, stdout};
+
 pub enum Cell {
     Empty,
     Wall,
@@ -29,12 +33,23 @@ impl green_tea_engine::Gamable for Game {
 
 impl Game {
     pub fn init() -> Game {
+        let stdout = stdout();
+        let mut stdout = stdout.lock().into_raw_mode().unwrap();
+        
+        // вот это
+        let mut stdin = async_stdin().bytes();
+
         Game {
             game_field: initialize_field()
         }
     }
 
     pub fn input_handle( &mut self ) {
+        let byte = stdin.next();
+
+        if let Some( Ok( b'q' ) ) = byte {
+            // break;
+        }
     }
 
     pub fn update( &mut self ) {
